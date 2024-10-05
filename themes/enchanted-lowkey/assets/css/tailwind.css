@@ -248,7 +248,7 @@
   
   /* Content overrides */
   #content {
-    @apply leading-normal;
+    @apply leading-normal p-8 md:p-6 lg:p-0;
   }
 
   #content a {
