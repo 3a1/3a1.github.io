@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@media screen and (max-width: 768px) 
+{
+  .header {
+    justify-content: center;
+    gap: 8px;
+  }
+  footer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 @layer base {
   /* inter-100 - latin */
   @font-face {
