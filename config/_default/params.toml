@@ -2,7 +2,7 @@
 isSinglePage = true
 
 # Meta Config
-description = "Hello"
+description = ""
 
 # Header Configuration
 avatar = "img/profile-picture.jpg"
