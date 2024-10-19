@@ -8,6 +8,54 @@ enableRobotsTXT = true
 summaryLength = 15
 paginate = 5
 
+[languages]
+[languages.en]
+[languages.en.params]
+  languageName = 'English'
+  weight = 2
+[languages.en.menu]
+[[languages.en.menu.main]]
+  name = "Posts"
+  url = "/"
+  weight = 1
+[[languages.en.menu.main]]
+  name = "About me"
+  url = "/about"
+  weight = 2
+[[languages.en.menu.main]]
+  "name" = "ru-RU"
+  "url" = "/ru/"
+  "weight" = 15
+[[languages.en.menu.social]]
+  identifier = "github"
+  name = "GitHub"
+  url = "https://github.com/3a1"
+  weight = 1
+
+
+[languages.ru]
+[languages.ru.params]
+  languageName = 'Русский'
+  weight = 1
+[languages.ru.menu]
+[[languages.ru.menu.main]]
+  name = "Posts"
+  url = "/"
+  weight = 1
+[[languages.ru.menu.main]]
+  name = "About me"
+  url = "/about"
+  weight = 2
+[[languages.ru.menu.main]]
+  "name" = "en-US"
+  "url" = "/"
+  "weight" = 25
+[[languages.ru.menu.social]]
+  identifier = "github"
+  name = "GitHub"
+  url = "https://github.com/3a1"
+  weight = 1
+
 
 [markup]
   [markup.highlight]
