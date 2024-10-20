@@ -1,7 +1,7 @@
 ---
-title: "Exploiting a 0day Vulnerability in Argus Monitor Driver"
+title: "Discovering a zero-day vulnerability in the Argus Monitor driver"
 draft: false
-date: 2024-08-27T09:16:45.000Z
+date: 2024-10-20T10:13:20.000Z
 description: "Bypassing encryption methods to exploit an arbitrary physical memory read vulnerability in a temperature monitoring software driver."
 categories:
   - kernel-mode
@@ -72,7 +72,7 @@ Looking at the code again, we see that the error is caused by the variable `byte
 
 What does it represent? I immediately thought, as you probably did too, that it seems very much like a check to see if the driver is ready for something or to verify some initialization. To check this, what do we need to do? Right, we should see how the driver behaves when we open the Argus Monitor program itself, which will run in the background with the driver. And, lo and behold, a different error appears, indicating that the program is doing something with the driver, causing the variable to change to `1`.
 
-But to keep the plot twist intact, we won't delve deeper into this just yet and will return to it later. Since we are already bypassing this check by opening the driver before sending the request, we'll leave it for now.
+But to keep the plot twist intact, we won't delve deeper into this just yet and will return to it later. Since we are already bypassing this check by opening the software before sending the request, we'll leave it for now.
 
 What we will focus on now is digging into what the next error is after attempting to run the reading function. We receive the error `0xE000A009`, which redirects us to this function:
 
@@ -156,13 +156,13 @@ I won’t drag this out, as many of you may have already figured out that this i
 
 So, what is the purpose of a **checksum**?
 
-A **checksum** is a data validation technique; in simpler terms, it's a variation of the SHA256 hash of files or, for those more familiar, CRC32. These can all be considered forms of checksum, although they are more complex than what we have here.
+A **checksum** is a technique for verifying data integrity. The main idea is that a short code (hash) is generated from the original data, which acts as a "fingerprint" of that data. If even a single bit of the data changes, this tiny modification will cause the hash to no longer match the original. This makes it easy to detect changes in the data. Simply put, it's a variation of the same concept as a SHA256 file hash or, for those who are more familiar, CRC32. These are all essentially types of checksums, although more complex than the basic one we're dealing with here.
 
 ## How to bypass this?
 
 #### Checksum
 
-Since we already understand that it computes the sum of all bytes except for the last two and checks for its presence in those last two bytes, we can conclude that we need to do the same as in the driver—calculate the sum of all bytes, place it in the last byte, and put the highest byte of the resulting sum in the penultimate byte.
+Since we now understand that the driver checks for the sum and the most significant bit in the last two bytes, we can conclude that we need to do the same as in the driver: calculate the sum of all the bytes, place the sum in the last byte, and put the most significant byte of the sum in the penultimate byte.
 
 Here’s an example of such a function that performs the **checksum** calculation for a buffer:
 
@@ -205,7 +205,7 @@ As mentioned earlier, we need to encrypt our input buffer with the key used in t
 
 {{< img src="16.jpg">}}
 
-Upon examining the variable used as the key, we see that it is a byte array of size **510** and is uninitialized. Let's check all the places where it is used.
+Upon examining the variable used as the key, we see that it is a byte array of size **510** and is uninitialized. Let's check all the places where it is used:
 
 {{< img src="17.jpg">}}
 
