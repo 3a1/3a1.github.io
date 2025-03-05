@@ -1,18 +1,15 @@
 ---
-title: "Analysying Insomnia - DXE Bootkit that infects kernel with backdoor"
+title: "Analysying Insomnia - Bootkit that infects kernel with backdoor"
 draft: false
 date: 2025-03-03T09:16:45.000Z
-description: "Analysying first DXE bootkit that abuses SSDT hooking to infects kernel with backdoor"
-categories:
-  - Hello
+description: "Analysying first bootkit that abuses SSDT hooking to infects kernel with backdoor"
 tags:
-  - Hello
-  - WhatsApp
+  - uefi
 ---
 
 ### Introduction
 
-As im sick for about 5 days so i decided to make something interesting - a DXE Bootkit. As a challange a also
+As im sick for about 5 days so i decided to make something interesting - a Boot Service Bootkit. As a challange a also
 promise myself that bootkit itself will have zero assembly, and i did it. In a result it was tiny, but in other hand quite
 complex but i think i will describe all the sketchy points of how it works here. 
 
