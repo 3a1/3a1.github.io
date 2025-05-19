@@ -100,7 +100,7 @@ without any issues. Also worth noting that we can even change other driver's **-
 {{< img src="7.png">}}
 
 We talked about how we will infect the kernel, but the main question is what will we infect the kernel with?
-Just recently, I saw **ekknod** project that makes it possible to execute ANY kernel functions
+Just recently, I saw a project made by **ekknod** which is called **SubGetVariable** that makes it possible to execute ANY kernel functions
 from usermode. I have linked the project at the end of this post, check it out! The author used some shellcode with which they're overwriting the
 **GetVariable** function. I remember that I promised myself to not use any assembly in the bootkit, I'll also need to figure out a way in which we need to do that without any assembly.
 The basic kernel mode execution payload is looks like this:
@@ -244,7 +244,7 @@ our driver will be automatically **unloaded** from memory :^(
 Will back to our **payload**, first we are going back in memory to get our saved **NtShutdownSystem** address.
 After that we will hit our **0xDEAD** signature, then we know that we are in the right place and **extracting** the address.
 
-And In the project **ekknod**, the author used very cool method of hiding the arguments
+And in the project **SubGetVariable** by **ekknod**, the author used very cool method of hiding the arguments
  by overwriting **EntryPoint** and **ImageSize** of the current image.
 So basically the calls to their hooked **GetVariable** function will look totally legitimate. 
 We can even use some reserved entry in local structures that is not used to store our data there.
@@ -336,4 +336,4 @@ At the end in getting anything together we are getting this one tiny usage examp
 Thank you for reading; I hope you learned something new!
 
 The full bootkit code with usermode can be found on [GitHub](https://github.com/3a1/Insomnia).
-Checkout the **ekknod** project at idk
+Checkout the **SubGetVariable** project by [ekknod](https://github.com/ekknod) on [GitHub](https://github.com/ekknod/SubGetVariable).
