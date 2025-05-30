@@ -146,8 +146,8 @@ That's what we are looking for. :D
  
 {{< img src="13.png">}}
 
-We can clearly see that it contains the relative addresses of all the kernel routines (YESS :D)
-But it's not the end because the **KiServiceTable** is also not initialized yet :>
+We can clearly see that it contains the relative addresses of all the kernel routines.
+But it's not the end because the **KiServiceTable** is also not initialized yet.
 
 To get an absolute kernel address from **ServiceTable** when the kernel is initialized, we need to do something like this:
 
@@ -191,8 +191,8 @@ But we are perfoming a hook **inside** the same module (which is the ntoskrnl). 
 absolute address in runtime and comparing it. But comparing it with what? With the addresses in the **EAT**? 
 But here in **syscalls**, there are some functions that don't have an **EAT export** so then what? The only true answer is will be
 calculating the absolute address from the file on disk and then calculate the absolute offsets from the runtime but like I said
-it is quite complex, the AV/EDR needs to make two different calculations but that WILL DETECT OUR HOOK.
- Anyways I don't really think that any AV/EDR is doing that except a few (we really need someone to test this, don't we huh? ).
+it is quite complex, the AV/EDR needs to make two different calculations but that will detect our hook.
+ Anyways I don't really think that for now any AV/EDR is doing that.
  
 We can't infect the kernel with anything, we can just make for example the **NtUnloadKey2** syscall to execute
  **MmCopyVirtualMemory** by just changing the relative offset that will point to the other function. 
@@ -205,7 +205,7 @@ And it is exported in **EAT**, so we don't need to search by pattern for it.
 
 Here we are retrieving the **PAGE** section **address** and **size**. With it we will make **padding abuse**.
 Then we will fetch **NtShutdownSystem export**, we need it to save the original function functionality.
-Without it, we even can't turn off our pc Lol :D
+Without it, we even can't turn off our pc :D
 
 As we are copying our payload to the padding, we are not copying our **.data** section so we won't be able access the **global variables**.
 We need to save our original **NtShutdownSystem address**.
