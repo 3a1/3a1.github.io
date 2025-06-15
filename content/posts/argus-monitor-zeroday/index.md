@@ -2,7 +2,7 @@
 title: "Discovering a zero-day vulnerability in the Argus Monitor driver"
 draft: false
 date: 2024-10-20T10:13:20.000Z
-description: "Bypassing encryption methods to exploit an arbitrary physical memory read vulnerability in a temperature monitoring software driver."
+description: "Bypassing security mechanisms to exploit an arbitrary physical memory read vulnerability in a temperature monitoring software driver."
 categories:
   - kernel-mode
 tags:
@@ -40,7 +40,7 @@ By following the first instance, we see that it is a wrapper function used to sw
 
 {{< img src="6.jpg">}}
 
-I won't show you all of them, but by going through each one, we can notice a particularly short function that closely resembles memory reading. We navigate to it and see this little marvel.
+I won't show you all of them, but by going through each one, we can notice a particularly short function that closely resembles memory reading. We navigate to it and see this picture.
 
 {{< img src="7.jpg">}}
 
@@ -70,9 +70,9 @@ It seems we have the IOCTL code that handles the reading function, and the drive
 
 Looking at the code again, we see that the error is caused by the variable `byte_14000F0DC` not being equal to `1`.
 
-What does it represent? I immediately thought, as you probably did too, that it seems very much like a check to see if the driver is ready for something or to verify some initialization. To check this, what do we need to do? Right, we should see how the driver behaves when we open the Argus Monitor program itself, which will run in the background with the driver. And, lo and behold, a different error appears, indicating that the program is doing something with the driver, causing the variable to change to `1`.
+What does it represent? I immediately thought, as you probably did too, that it seems very much like a check to see if the driver is ready for something or to verify some initialization. To check this, what do we need to do? Right, we should see how the driver behaves when we open the Argus Monitor program itself, which will run in the background with the driver. And, boom, a different error appears, indicating that the program is doing something with the driver, causing the variable to change to `1`.
 
-But to keep the plot twist intact, we won't delve deeper into this just yet and will return to it later. Since we are already bypassing this check by opening the software before sending the request, we'll leave it for now.
+But to keep the plot twist intact, we won't go deeper into this just yet and will return to it later. Since we are already bypassing this check by opening the software before sending the request, we'll leave it for now.
 
 What we will focus on now is digging into what the next error is after attempting to run the reading function. We receive the error `0xE000A009`, which redirects us to this function:
 
@@ -86,9 +86,9 @@ Let's take a look at what this function consists of:
 
 Immediately noticeable is the XOR operation, which indicates that some XOR encryption is being performed on the `MasterIrp` buffer. It's also worth noting that this occurs only when `a3 == 1`, and it encrypts all bytes except for the last two, which we will understand later. For those who have never dealt with XOR encryption, let me briefly explain and visualize how XOR encryption works:
 
-**XOR Table:**
+**XOR Opration Table:**
 
-| Input A | Input B | Output A ⊕ B |
+|  A |  B | A ⊕ B |
 |---------|---------|--------------|
 |    0    |    0    |       0      |
 |    0    |    1    |       1      |
@@ -118,7 +118,7 @@ In simple terms:
 $$ E = T \oplus K $$
 $$ T = E \oplus K $$
 
-So, returning to the function, what does our understanding of how XOR works and its decryption tell us? It indicates that this function does not encrypt the input buffer with XOR; rather, it **decrypts** it. As we can see, the function is used with the argument `a3 = 1`, meaning it performs the XOR operation on the input buffer. After this, it takes the physical address, which is passed to the read function, proving that it is indeed decrypting. If it were encrypting, the address it read would be invalid.
+So, returning to the function, what does our understanding of how XOR operation works and its decryption tell us? It indicates that this function does not encrypt the input buffer with XOR; rather, it **decrypts** it. As we can see, the function is used with the argument `a3 = 1`, meaning it performs the XOR operation on the input buffer. After this, it takes the physical address, which is passed to the read function, proving that it is decrypting. If it were encrypting, the address it read would be invalid.
 
 Now, let's see what the function does next:
 
@@ -142,27 +142,27 @@ v3 += *(unsigned __int8 *)(v11 + a1);
 
 It stores in `v3` the sum of all byte values in the input buffer, excluding the last **2** bytes. Quite intriguing.
 
-Next, let's take a look at the final check and see what it entails:
+Next, let's take a look at the final check:
 
 ```c
 return *(_BYTE *)(v9 + a1) == HIBYTE(v3) && *(_BYTE *)((unsigned int)(a2 - 1) + a1) == (_BYTE)v3;
 ```
 
-At the end, the function checks whether the penultimate byte of the input buffer is the highest bit of the sum from the loop and whether the last byte is that same sum.
+At the end, the function checks whether the second-to-last byte of the input buffer mathes the high byte of the sum from the loop and whether the last byte is matches that sum.
 
-Honestly, even though I was quite familiar with XOR encryption, as it's a classic technique in various fields, I didn't immediately recognize this when I saw it for the first time in code. I understood how it works and its purpose, but sometimes it's challenging to realize that it's a popular technique when you encounter it in code.
+Honestly, even though I was quite familiar with XOR encryption, as it's a classic technique in various fields, I didn't immediately recognize this technique when I saw it for the first time in the wild. I understood how it works and its purpose, but sometimes it's challenging to realize that it's a popular technique.
 
 I won’t drag this out, as many of you may have already figured out that this is a vanilla **checksum**.
 
 So, what is the purpose of a **checksum**?
 
-A **checksum** is a technique for verifying data integrity. The main idea is that a short code (hash) is generated from the original data, which acts as a "fingerprint" of that data. If even a single bit of the data changes, this tiny modification will cause the hash to no longer match the original. This makes it easy to detect changes in the data. Simply put, it's a variation of the same concept as a SHA256 file hash or, for those who are more familiar, CRC32. These are all essentially types of checksums, although more complex than the basic one we're dealing with here.
+A **checksum** is a technique for verifying data integrity. The main idea is that a short code (hash) is generated from the original data, which acts as a "fingerprint" of that data. If even a single bit of the data changes, this tiny modification will cause the hash to no longer match the original. This makes it easy to detect changes in the data. Simply put, it's a variation of the same concept as a CRC32.
 
 ## How to bypass this?
 
 #### Checksum
 
-Since we now understand that the driver checks for the sum and the most significant bit in the last two bytes, we can conclude that we need to do the same as in the driver: calculate the sum of all the bytes, place the sum in the last byte, and put the most significant byte of the sum in the penultimate byte.
+Since we now understand that the driver checks for the sum and the high bit of the sum in the last two bytes, we can conclude that we need to do the same as in the driver: calculate the sum of all bytes, place the sum in the last byte, and put the most significant byte of the sum in the second-to-last byte.
 
 Here’s an example of such a function that performs the **checksum** calculation for a buffer:
 
@@ -205,19 +205,19 @@ As mentioned earlier, we need to encrypt our input buffer with the key used in t
 
 {{< img src="16.jpg">}}
 
-Upon examining the variable used as the key, we see that it is a byte array of size **510** and is uninitialized. Let's check all the places where it is used:
+Upon examining the variable used as the key, we see that it is a byte array of size **510** and it is uninitialized. Let's check all the places where it is used:
 
 {{< img src="17.jpg">}}
 
-Here, we see that apart from 4 instances where it is simply loaded into a register, it doesn't change anywhere else. However, if we follow all of them, we will notice that one of them leads us to a loop in the IOCTL request handler. Let's take a closer look at that.
+Here, we see 4 references where the address of this variable is loaded into a register. However, if we follow all of them, we will notice that one of them leads us to a loop in the IOCTL request handler. Let's take a closer look at that.
 
-{{< img src="18.jpg">}}
+{{< img src="18.jpg" caption="v87->Type is input buffer">}}
 
-At first glance, if we were directed to the first line where the variable is used, one might think that we're simply reading the variable and assigning its contents to another variable. However, that's not the case. Upon closer inspection, as shown in the image, we see that it actually appends the address of this variable to the variable `v88` and then initializes another variable with the contents of the input buffer.
-
-We also need to recall the variable that was checked and became **1** when the program was opened. A little further down, it is indeed initialized to **1** here.
+At first glance, one might think that we're simply reading the variable and assigning its contents to another variable. However, its assigning the address of our array. Upon closer inspection, as shown in the image, it copies the input buffer into variable that holds our array address.
 
 {{< img src="19.jpg">}}
+
+Remember that one variable that gives us error before, and was intialized only when the program is opened? We can saw here that this variable became **1** when the key array is copied from the input buffer.
 
 **What do we have in the complete picture?**
 
@@ -225,17 +225,17 @@ There is an IOCTL function that initializes the XOR key sent from the client sid
 
 ### Sending Our XOR Key
 
-First, we need to understand what checks occur in this function:
+First, we need to understand what checks occur in the sending xor key function:
 
 {{< img src="20.jpg">}}
 
-Here, we see the first two checks for the size of the input and output buffers. We can further confirm that the function accepts the XOR key because the size of the input buffer is 512 bytes. As we recall, our XOR variable is precisely **510** bytes, with **2** bytes allocated for the checksum. 
+Here, we see the first two checks for the size of the input and output buffers. We can further confirm that the function accepts the XOR key because the size of the input buffer is 512 bytes. As we remember before, our XOR variable is precisely **510** bytes, with **2** bytes allocated for the checksum. 
 
-Next is our function that performs the checksum and XOR validation, and we see that the third argument is zero, which, as we remember, means that the function skips the XOR operations and only performs the checksum validation.
+Next we see call to our function that performs the checksum and XOR validation, and we see that the third argument is zero, which, as we remember, means that the function skips the XOR operations and only performs the checksum validation.
 
-An important detail we need to pay attention to is which XOR key we choose. 
+An important detail we need to pay attention is which XOR key we want to send. 
 
-It would be logical to choose a key consisting of all ones, but we can take a slightly cleverer approach.
+It would be logical to choose a random key, or any other, but we can take a slightly cleverer approach.
 
 Since we know from the table I provided earlier that the XOR operation **0 and 1** yields **1**, and **0 and 0** also yields **1**, that means:
 
@@ -246,7 +246,7 @@ This means that:
 
 $$ a \oplus 0 = a $$
 
-Hooray! We now understand how to completely disable the XOR encryption.
+By initializing the key with zeros, we are completely disabling encryption at all. Thats cool.
 
 Now we can create a function to send the IOCTL and the key to the driver:
 
@@ -259,12 +259,6 @@ bool send_xor_key()
     for (int i = 0; i < sizeof(input); i++)
     {
         input[i] = 0;
-    }
-
-    if (!checksum_buffer(input, sizeof(input)))
-    {
-        printf("cant checksum buffer\n");
-        return false;
     }
 
     DWORD bytesReturned = 0;
@@ -289,7 +283,7 @@ bool send_xor_key()
 }
 ```
 
-> If we send the XOR key made of zeros, we can skip the checksum calculation since the last two bytes will still equal zero.
+> If we send an XOR key made of zeros, we can skip the checksum calculation, because the last two bytes will be zero since sum of all bytes is equal zero.
 
 ### Creating a Function for Reading Memory
 
@@ -362,8 +356,10 @@ int main()
 {{< img src="21.jpg">}}
 {{< img src="22.jpg">}}
 
-Hooray! Everything works! We’ve successfully demonstrated a vulnerability for arbitrary reading of physical memory.
+Everything works! We’ve successfully demonstrated a vulnerability for arbitrary reading of physical memory.
 
 Thank you for reading; I hope you learned something new!
 
 The complete PoC code is available on [GitHub](https://github.com/3a1/Argus-PoC).
+
+Upd: Ps: Dont bother trying to use this vuln in your project; It wont work; Told you so;

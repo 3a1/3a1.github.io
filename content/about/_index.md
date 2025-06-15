@@ -5,4 +5,3 @@ type: taxonomies
 layout: "home"
 ---
 
-Nobody cares
