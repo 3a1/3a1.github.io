@@ -16,99 +16,10 @@ So I added a new challenge: rewrite it in ASM and under 1 KB in size.
 
 Now, I think it makes for a much better story to tell.
 
-### EfiMain
-
-In **EfiMain**, after loading, two arguments are passed in: the first is **ImageHandle**, and the second is **SystemTable**.
-In asm, these are stored in `rcx` and `rdx` registers.
-When writing in ASM, we also need to keep the calling convention of the environment in mind.
-Fortunately, EFI uses the same calling convention as the default Windows ABI, same argument registers and all.
-
-The code is already well documented, but I’ll still try to explain what’s going on.
-So, let’s take a look.
-
-{{< img src="EfiMain-1.png">}}
-
-Here we resolve the **BootServices** pointer from the **SystemTable** argument and store it in a global variable.
-We do the same with **AllocatePages**.
-
-Then we retrieve our address within the image and walk backwards page by page to locate the base.
-
-{{< img src="EfiMain-2.png">}}
-
-Once we find the image base, we store it in a global variable.
-After that, we resolve the NT headers and extract the **ImageSize** field value.
-We convert it into pages for later memory allocation.
-
-{{< img src="EfiMain-3.png">}}
-
-Here we call the **AllocatePages** function to allocate a new memory region.
-Why we at all doing all those things?
-That’s because I want the driver to load directly from a USB boot using only bootx64.efi, without relying on any EFI shells.
-To make this possible, we had a couple of options:
-
-1. Set the subsystem to **EFI_RUNTIME_DRIVER**
-2. Set the subsystem to **EFI_BOOT_SERVICE_DRIVER**
-2. Set the subsystem to **EFI_APPLICATION**
-
-The first option is not suitable because we don’t need our image to reside in runtime. We want it to be unloaded after **ExitBootServices** to avoid leaving traces in runtime.
-
-The second option is also unsuitable, because for some reason, even though it stands for **BootServices**, the bootloader still allocates runtime pages for the image. 
-The reason for this behavior is unknown to me.
-
-That left us with only the last option: **EFI_APPLICATION**. The advantage, and at the same time the drawback, is that it gets unloaded immediately after **EfiMain** exits.
-This means we leave no traces, which is good. However, since we need to place our hook and continue execution after EfiMain, we must manually allocate pages and copy the image into them.
-
-{{< img src="EfiMain-4.png">}}
-
-After allocation, we copy the local image into the newly allocated memory, nothing complicated.
-
-{{< img src="EfiMain-5.png">}}
-
-Here we place the hook by calculating its relative address and adding it to the newly allocated base.
-Finally, we return **EFI_SUCCESS**.
-
-### AllocatePagesHook
-
-First, we need to keep in mind that our function can be called from anywhere in the system with four arguments.
-
-According to the calling convention, these arguments are stored in the `rcx`, `rdx`, `r8`, and `r9` registers.
-
-{{< img src="AllocatePagesHook-1.png">}}
-
-After our hook executes, the caller’s arguments are passed in registers.
-We save these registers on the stack so they can be restored after our modifications.
-
-Since we want to patch ntoskrnl.exe, we need to perform a memory scan to detect when it is loaded into the system.
-
-The OS kernel is always backed by 2 MB pages, so we step through memory in 2 MB chunks.
-
-{{< img src="AllocatePagesHook-2.png">}}
-
-Once we find an image, we need to identify whether it’s our target.
-To do this, we parse the NT headers, then navigate to the Export Directory and read the **Name** field.
-
-If the image is **ntoskrnl.exe**, this field will contain that name. 
-So we simply check if it starts with `ntos`krnl.exe.
-
-{{< img src="AllocatePagesHook-3.png">}}
-
-Once we’ve identified the OS kernel, we scan it byte by byte for the AOB pattern.
-
-When we find the exact location, we patch it with:
-
-```asm
-xor		edi,edi
-```
-(I’ll describe the purpose of this patch later)
-
-{{< img src="AllocatePagesHook-4.png">}}
-
-Finally, we restore the hook to the original **AllocatePage** and return control to the original function.
-
 ### How the DSE works
 
-As you saw before, we’re making a simple two-byte patch. 
-To understand how I came to this approach, let’s discuss how DSE works.
+Before we will start writing bootkit, we need to understand how to bypass DSE, to make it we need firstly understand how it works. 
+Let’s discuss how DSE works.
 
 **DSE** stands for **Driver Signature Enforcement**.
 Simply put, it's the security feature that stands behind the certificate verification of loaded drivers in system.
@@ -285,6 +196,100 @@ However, I chose to overwrite the **g_CiOptions** value because it is simpler.
 In theory, it might also be possible to overwrite **CI.dll** itself before it is protected by **HVCI**, but I am not certain, this is purely theoretical.
 
 Overall the possibilities are limited only by your imagination; there are countless approaches.
+
+
+### Bootkit Analysis
+
+Let's now see how we can make this patch from EFI bootkit.
+
+#### EfiMain
+
+In **EfiMain**, after loading, two arguments are passed in: the first is **ImageHandle**, and the second is **SystemTable**.
+In asm, these are stored in `rcx` and `rdx` registers.
+
+When writing in ASM, we also need to keep the calling convention of the environment in mind.
+Fortunately, EFI uses the same calling convention as the default Windows ABI, same argument registers and all.
+
+The code is already well documented, but I’ll still try to explain what’s going on.
+So, let’s take a look.
+
+{{< img src="EfiMain-1.png">}}
+
+Here we resolve the **BootServices** pointer from the **SystemTable** argument and store it in a global variable.
+We do the same with **AllocatePages**.
+
+Then we retrieve our address within the image and walk backwards page by page to locate the base.
+
+{{< img src="EfiMain-2.png">}}
+
+Once we find the image base, we store it in a global variable.
+After that, we resolve the NT headers and extract the **ImageSize** field value.
+We convert it into pages for later memory allocation.
+
+{{< img src="EfiMain-3.png">}}
+
+Here we call the **AllocatePages** function to allocate a new memory region.
+Why we at all doing all those things?
+That’s because I want the driver to load directly from a USB boot using only bootx64.efi, without relying on any EFI shells.
+To make this possible, we had a couple of options:
+
+1. Set the subsystem to **EFI_RUNTIME_DRIVER**
+2. Set the subsystem to **EFI_BOOT_SERVICE_DRIVER**
+2. Set the subsystem to **EFI_APPLICATION**
+
+The first option is not suitable because we don’t need our image to reside in runtime. We want it to be unloaded after **ExitBootServices** to avoid leaving traces in runtime.
+
+The second option is also unsuitable, because for some reason, even though it stands for **BootServices**, the bootloader still allocates runtime pages for the image. 
+The reason for this behavior is unknown to me.
+
+That left us with only the last option: **EFI_APPLICATION**. The advantage, and at the same time the drawback, is that it gets unloaded immediately after **EfiMain** exits.
+This means we leave no traces, which is good. However, since we need to place our hook and continue execution after EfiMain, we must manually allocate pages and copy the image into them.
+
+{{< img src="EfiMain-4.png">}}
+
+After allocation, we copy the local image into the newly allocated memory, nothing complicated.
+
+{{< img src="EfiMain-5.png">}}
+
+Here we place the hook by calculating its relative address and adding it to the newly allocated base.
+Finally, we return **EFI_SUCCESS**.
+
+#### AllocatePagesHook
+
+First, we need to keep in mind that our function can be called from anywhere in the system with four arguments.
+
+According to the calling convention, these arguments are stored in the `rcx`, `rdx`, `r8`, and `r9` registers.
+
+{{< img src="AllocatePagesHook-1.png">}}
+
+After our hook executes, the caller’s arguments are passed in registers.
+We save these registers on the stack so they can be restored after our modifications.
+
+Since we want to patch ntoskrnl.exe, we need to perform a memory scan to detect when it is loaded into the system.
+
+The OS kernel is always backed by 2 MB pages, so we step through memory in 2 MB chunks.
+
+{{< img src="AllocatePagesHook-2.png">}}
+
+Once we find an image, we need to identify whether it’s our target.
+To do this, we parse the NT headers, then navigate to the Export Directory and read the **Name** field.
+
+If the image is **ntoskrnl.exe**, this field will contain that name. 
+So we simply check if it starts with `ntos`krnl.exe.
+
+{{< img src="AllocatePagesHook-3.png">}}
+
+Once we’ve identified the OS kernel, we scan it byte by byte for the AOB pattern.
+
+When we find the exact location, we patch it with:
+
+```asm
+xor		edi,edi
+````
+
+{{< img src="AllocatePagesHook-4.png">}}
+
+Finally, we restore the hook to the original **AllocatePage** and return control to the original function.
 
 ### Optimizing the bootkit size
 
