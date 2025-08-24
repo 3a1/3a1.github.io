@@ -18,8 +18,8 @@ Now, I think it makes for a much better story to tell.
 
 ### How the DSE works
 
-Before we will start writing bootkit, we need to understand how to bypass DSE, to make it we need firstly understand how it works. 
-Let’s discuss how DSE works.
+Before we start writing a bootkit, we need to understand how to bypass DSE and to do that, we first need to understand how it operates. 
+Let’s break down how DSE works.
 
 **DSE** stands for **Driver Signature Enforcement**.
 Simply put, it's the security feature that stands behind the certificate verification of loaded drivers in system.
