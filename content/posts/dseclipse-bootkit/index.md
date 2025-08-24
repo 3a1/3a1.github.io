@@ -231,7 +231,7 @@ We convert it into pages for later memory allocation.
 Here we call the **AllocatePages** function to allocate a new memory region.
 Why we at all doing all those things?
 That’s because I want the driver to load directly from a USB boot using only bootx64.efi, without relying on any EFI shells.
-To make this possible, we had a couple of options:
+To make this possible, we had three main options:
 
 1. Set the subsystem to **EFI_RUNTIME_DRIVER**
 2. Set the subsystem to **EFI_BOOT_SERVICE_DRIVER**
