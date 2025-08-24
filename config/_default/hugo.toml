@@ -6,7 +6,7 @@ theme = 'enchanted-lowkey'
 title = 'Z3bra'
 enableRobotsTXT = true
 summaryLength = 15
-paginate = 5
+pagination.pagerSize = 5
 
 [languages]
 [languages.en]

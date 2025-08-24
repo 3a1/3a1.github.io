@@ -3,7 +3,7 @@
 <article class="flex flex-col gap-10">
   <header class="flex flex-col gap-2">
     <h2 class="title-large">{{ .Title }}</h2>
-
+	
     <div class="meta">
       {{/* Publish date */}}
       <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
@@ -23,7 +23,7 @@
 
   {{ partial "single/table-of-contents" . }}
 
-  <section>{{ .Content | emojify }}</section>
+  <section >{{ .Content | emojify }}</section>
 
   {{ partial "single/comments/index" . }}
 

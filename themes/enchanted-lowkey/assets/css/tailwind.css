@@ -153,7 +153,7 @@
   }
 
   p, hr, pre, dl {
-    @apply mb-5 text-justify;
+    @apply mb-5 text-left text-base leading-relaxed;
   }
   
   article > h1 {
@@ -377,7 +377,7 @@
   }
 
   .title-large {
-    @apply text-4xl leading-snug font-bold text-gray-900 dark:text-gray-300;
+    @apply text-3xl leading-snug font-bold text-gray-900 dark:text-gray-300;
   }
 
   .title-small {
