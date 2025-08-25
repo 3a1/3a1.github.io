@@ -327,6 +327,8 @@ However, there is an undocumented linker flag, **/EMITPOGOPHASEINFO**, which rem
 {{< img src="binary-size.png">}}
 
 After stripping this debug information, our binary is 976 bytes in size.
+It’s pretty impressive when you realize that out of those 976 bytes, 464 are taken up just by PE headers.
+
 We have successfully achieved our goal.
 
 ### End
