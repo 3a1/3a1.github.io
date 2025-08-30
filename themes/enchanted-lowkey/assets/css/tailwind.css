@@ -272,7 +272,7 @@
   }
   
   #content .description {
-    @apply text-gray-600 dark:text-gray-300 text-base;
+    @apply text-gray-600 text-left dark:text-gray-300 text-base;
   }
   
   #content .read-more {
