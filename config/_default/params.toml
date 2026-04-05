@@ -13,6 +13,9 @@ favicon = "icons/favicon.ico"
 # disqus is a comment system. see https://disqus.com
 disqusShortname = ""
 
+# Google Verification 
+googleVerification = "OXepUCt4z1u9QryWmz5m3XjHFGq0mKx6tHNKSWQtK9w"
+
 [emoji]
 enableEmoji = true
 
