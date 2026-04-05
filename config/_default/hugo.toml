@@ -1,4 +1,4 @@
-baseURL = ''
+baseURL = 'https://3a1.github.io/'
 copyright = "{year}" # To make 2007 - 2022. Just add before {year} example: 2007 - {year}
 languageCode = 'en-US'
 defaultContentLanguage = 'en'

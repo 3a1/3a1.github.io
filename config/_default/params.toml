@@ -2,7 +2,7 @@
 isSinglePage = true
 
 # Meta Config
-description = ""
+description = "Security research blog covering UEFI bootkits, kernel exploitation, zero-day vulnerabilities, and low-level Windows internals."
 
 # Header Configuration
 avatar = "img/profile-picture.jpg"

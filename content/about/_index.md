@@ -1,7 +1,5 @@
 ---
 title: "About Me"
 draft: false
-type: taxonomies
-layout: "home"
+description: "Security researcher focused on UEFI bootkits, kernel exploitation, and Windows internals."
 ---
-
