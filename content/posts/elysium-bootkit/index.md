@@ -2,7 +2,7 @@
 title: "Elysium - UEFI Bootkit Framework that attacks boot-time Code Integrity"
 draft: false
 date: 2025-08-29T21:54:18.000Z
-description: "Deep dive into attacking the winload Code Integrity and revealing new techniques"
+description: "Deep dive into attacking the winload Code Intergrity and revealing new techniques"
 tags:
   - uefi
 ---

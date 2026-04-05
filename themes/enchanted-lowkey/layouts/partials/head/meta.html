@@ -3,80 +3,13 @@
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="robots" content="index, follow" />
-
-{{- $title := cond .IsHome .Site.Title .Title -}}
-{{- $description := "" -}}
-{{- if .IsPage -}}
-  {{- $description = or .Params.description .Summary -}}
-{{- else if .IsHome -}}
-  {{- $description = .Site.Params.description -}}
-{{- else -}}
-  {{- $description = or .Params.description .Summary -}}
-{{- end -}}
-
-<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} | {{ .Site.Title }}{{ end }}</title>
-<meta name="description" content="{{ $description }}" />
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}</title>
+<meta
+  name="description"
+  content="{{ if .IsPage }}{{ or .Params.description .Summary }}{{ else if .IsHome }}{{ .Site.Params.description }}{{ else if .IsNode }}{{ or .Params.description .Summary }}{{ end }}"
+/>
 <link rel="canonical" href="{{ .Permalink }}" />
 <link rel="robots" href="/robots.txt" />
-
-<!-- Open Graph -->
-<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
-<meta property="og:title" content="{{ $title }}" />
-<meta property="og:description" content="{{ $description }}" />
-<meta property="og:url" content="{{ .Permalink }}" />
-<meta property="og:site_name" content="{{ .Site.Title }}" />
-{{- if .IsPage }}
-<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" />
-<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}" />
-{{- range .Params.tags }}
-<meta property="article:tag" content="{{ . }}" />
-{{- end }}
-{{- end }}
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="{{ $title }}" />
-<meta name="twitter:description" content="{{ $description }}" />
-
-<!-- JSON-LD Structured Data -->
-{{- if .IsPage }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": {{ .Title | jsonify }},
-  "description": {{ $description | jsonify }},
-  "datePublished": "{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}",
-  "dateModified": "{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}",
-  "url": {{ .Permalink | jsonify }},
-  "author": {
-    "@type": "Person",
-    "name": {{ .Site.Title | jsonify }},
-    "url": {{ .Site.BaseURL | jsonify }}
-  },
-  "publisher": {
-    "@type": "Person",
-    "name": {{ .Site.Title | jsonify }},
-    "url": {{ .Site.BaseURL | jsonify }}
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": {{ .Permalink | jsonify }}
-  }
-}
-</script>
-{{- else if .IsHome }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Blog",
-  "name": {{ .Site.Title | jsonify }},
-  "description": {{ $description | jsonify }},
-  "url": {{ .Site.BaseURL | jsonify }}
-}
-</script>
-{{- end }}
 
 <link rel="icon" type="image/x-icon" href="{{ $favicon.RelPermalink }}" />
 
