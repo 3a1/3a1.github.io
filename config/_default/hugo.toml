@@ -1,4 +1,4 @@
-baseURL = ''
+baseURL = 'https://3a1.github.io/'
 copyright = "{year}" # To make 2007 - 2022. Just add before {year} example: 2007 - {year}
 languageCode = 'en-US'
 defaultContentLanguage = 'en'
@@ -34,7 +34,7 @@ pagination.pagerSize = 5
 [[languages.en.menu.social]]
   identifier = "telegram"
   name = "Telegram"
-  url = "https://t.me/ZebraEth"
+  url = "https://t.me/zebraeth"
   weight = 2
 
 [languages.ru]
