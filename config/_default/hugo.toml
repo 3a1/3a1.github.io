@@ -22,10 +22,6 @@ pagination.pagerSize = 5
   name = "About me"
   url = "/about"
   weight = 2
-[[languages.en.menu.main]]
-  "name" = "ru-RU"
-  "url" = "/ru/"
-  "weight" = 15
 [[languages.en.menu.social]]
   identifier = "github"
   name = "GitHub"
