@@ -3,8 +3,6 @@ title: "DSEclipse - Story behind bootkit that bypasses DSE in under 1 KB"
 draft: false
 date: 2025-08-21T21:54:18.000Z
 description: "Analysing my ASM Bootkit that patches DSE at boot allowing to load unsigned drivers"
-tags:
-  - uefi
 ---
 
 ### Introduction
