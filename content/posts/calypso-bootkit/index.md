@@ -3,8 +3,6 @@ title: "Analysing Calypso - UEFI Windows Bootkit"
 draft: false
 date: 2024-12-31T10:13:20.000Z
 description: "Analysing my UEFI Bootkit with usermode communication"
-tags:
-  - uefi
 ---
 
 ### Introduction
