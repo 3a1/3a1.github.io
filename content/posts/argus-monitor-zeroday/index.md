@@ -3,10 +3,6 @@ title: "Discovering a zero-day vulnerability in the Argus Monitor driver"
 draft: false
 date: 2024-10-20T10:13:20.000Z
 description: "Bypassing security mechanisms to exploit an arbitrary physical memory read vulnerability in a temperature monitoring software driver."
-categories:
-  - kernel-mode
-tags:
-  - zeroday
 ---
 
 ### Introduction
