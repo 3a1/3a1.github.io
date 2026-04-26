@@ -1,5 +1,6 @@
 ---
 title: "About Me"
 draft: false
-description: "Security researcher focused on UEFI bootkits, kernel exploitation, and Windows internals."
 ---
+
+Have a question? Feel free to DM me on Telegram.
