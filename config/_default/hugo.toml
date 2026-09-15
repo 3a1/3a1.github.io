@@ -1,6 +1,6 @@
 baseURL = 'https://z3bra.cat/'
 copyright = "{year}" # To make 2007 - 2022. Just add before {year} example: 2007 - {year}
-languageCode = 'en-US'
+locale = 'en-US'
 defaultContentLanguage = 'en'
 theme = 'enchanted-lowkey'
 title = 'Z3bra'
@@ -28,7 +28,7 @@ pagination.pagerSize = 5
   weight = 1
 [[languages.en.menu.social]]
   name = "Telegram"
-  url = "https://t.me/sinkholing"
+  url = "https://t.me/zerologon"
   weight = 2
 
 [markup]
