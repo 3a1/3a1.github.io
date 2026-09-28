@@ -27,6 +27,7 @@ My first idea was to download the game on an emulator and write a Python script 
 
 So if it works, can we beat the regional ranking? And here is where things get interesting. The best scored player in the Europe region has a record of 20,000 points. That is roughly 30 minutes of continuously playing. You don’t see it in the video because it only shows the start of the game, but once endless mode begins, the speed of the objects is quite fast. I’m not pointing fingers, but let’s be real, those guys at the top aren’t piano prodigies from birth. They somehow managed to trick this mini-game too. Even today, I’m still curious to know how those guys managed to trick it, but unfortunately, after all this time, I don’t think we will ever get the answer. 
 
+
 ## Changing Approach
 
 Anyway, playing for 30 minutes was too long for me. So I went looking for a better trick. I realized the mini-game is fully client-side. Meaning the HP, points, and time are stored and calculated on the device itself. I launched Cheat Engine, attached it to the game, and started scanning for the health value. And… I have found it.
