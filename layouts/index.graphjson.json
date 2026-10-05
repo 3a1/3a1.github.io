@@ -1,0 +1,25 @@
+{{- $pages := where .Site.RegularPages "Section" "in" (slice "posts") -}}
+{{- $nodes := slice -}}
+{{- $links := slice -}}
+{{- $seen := slice -}}
+
+{{- range $pages -}}
+  {{- $pid := .RelPermalink -}}
+  {{- $nodes = $nodes | append (dict "id" $pid "title" .Title "type" "post" "url" $pid) -}}
+  {{- range (.Params.categories | default slice) -}}
+    {{- $name := . -}}
+    {{- $slug := $name | urlize -}}
+    {{- $cid := printf "cat:%s" $slug -}}
+    {{- if not (in $seen $cid) -}}
+      {{- $seen = $seen | append $cid -}}
+      {{- $url := printf "/categories/%s/" $slug | relURL -}}
+      {{- with site.GetPage (printf "/categories/%s" $slug) -}}
+        {{- $url = .RelPermalink -}}
+      {{- end -}}
+      {{- $nodes = $nodes | append (dict "id" $cid "title" $name "type" "category" "url" $url) -}}
+    {{- end -}}
+    {{- $links = $links | append (dict "source" $pid "target" $cid) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- dict "nodes" $nodes "links" $links | jsonify -}}

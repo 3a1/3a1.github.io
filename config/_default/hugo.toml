@@ -8,6 +8,15 @@ enableRobotsTXT = true
 summaryLength = 15
 pagination.pagerSize = 5
 
+[outputFormats.GraphJSON]
+  mediaType = "application/json"
+  baseName = "graph"
+  isPlainText = true
+  notAlternative = true
+
+[outputs]
+  home = ["HTML", "RSS", "GraphJSON"]
+
 [languages]
 [languages.en]
 [languages.en.params]
@@ -19,9 +28,14 @@ pagination.pagerSize = 5
   url = "/"
   weight = 1
 [[languages.en.menu.main]]
-  name = "About me"
-  url = "/about"
+  name = "Graph"
+  url = "/graph/"
   weight = 2
+[[languages.en.menu.main]]
+  name = "Contact"
+  url = "/contact/"
+  weight = 3
+
 [[languages.en.menu.social]]
   name = "GitHub"
   url = "https://github.com/3a1"
@@ -30,6 +44,10 @@ pagination.pagerSize = 5
   name = "Telegram"
   url = "https://t.me/zerologon"
   weight = 2
+[[languages.en.menu.social]]
+  name = "X"
+  url = "https://x.com/z3bra_re"
+  weight = 3
 
 [markup]
   [markup.goldmark]

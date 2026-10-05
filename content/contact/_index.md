@@ -1,10 +1,8 @@
 ---
-title: "About Me"
+title: "Contact"
 draft: false
 ---
 
-I'm Lazy, but I love hacking.
-<br>
 Join the Telegram [channel](https://t.me/zerologon) for updates. 
 <br>
 Have a question? DM me on [Telegram](https://t.me/sinkholing).

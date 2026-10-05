@@ -3,6 +3,8 @@ title: "Analysing Insomnia - Bootkit that infects kernel with backdoor"
 draft: false
 date: 2025-03-03T09:16:45.000Z
 description: "Analysing first bootkit that abuses SSDT hooking to infects kernel with backdoor"
+categories:
+  - Bootkits
 ---
 
 ### Introduction

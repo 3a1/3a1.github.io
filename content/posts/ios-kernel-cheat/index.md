@@ -3,6 +3,8 @@ title: "My journey on how I build a kernel-level iOS cheat"
 draft: false
 date: 2026-09-14T10:13:20.000Z
 description: "My jorney on how I build a PUBG Mobile iOS client-server undetected ESP using kfd kernel exploit."
+categories:
+  - Game Hacking
 ---
 
 It all started a couple of months ago. Driven by nostalgia for the old seasons I played as a kid, I downloaded the game again. The biggest difference between me and the kid who played this game years ago was that today, I know how to program. So I realized that I could use my technical background to build a cheat using my knowledge as an advantage.

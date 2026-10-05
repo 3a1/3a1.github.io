@@ -3,19 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  @media (max-width: 768px) {
-    .header {
-      justify-content: center;
-      gap: 8px;
-    }
-    footer {
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-
   /* inter-100 - latin */
   @font-face {
     font-family: 'Inter';
@@ -199,10 +186,6 @@
     @apply list-none ml-0;
   }
 
-  header h1 {
-    @apply mb-0;
-  }
-
   table {
     @apply w-full border rounded-md border-separate border-spacing-0 mb-5;
   }
@@ -227,16 +210,8 @@
     @apply pl-10;
   }
 
-  header nav > ul {
-    @apply flex flex-wrap justify-center uppercase text-xs font-semibold gap-7;
-  }
-
   nav a, footer a {
     @apply text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-semibold;
-  }
-
-  footer {
-    @apply text-xs;
   }
 }
 
@@ -247,11 +222,11 @@
 
   /* Content overrides */
   #content {
-    @apply leading-normal p-8 md:p-6 lg:p-0;
+    @apply leading-normal px-8 md:px-6 lg:px-0;
   }
 
   #content a {
-    @apply underline font-bold text-emerald-700 hover:text-emerald-600 dark:text-red-600 dark:hover:text-red-700;
+    @apply underline font-bold text-emerald-700 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-gray-100;
   }
 
   #content .date {
@@ -275,7 +250,7 @@
   }
 
   #content .read-more {
-    @apply no-underline inline-flex gap-2 text-sm font-semibold items-center text-emerald-700 hover:text-emerald-600 dark:text-red-600 dark:hover:text-red-700;
+    @apply no-underline inline-flex gap-2 text-sm font-semibold items-center text-emerald-700 hover:text-emerald-600 dark:text-gray-300 dark:hover:text-gray-100;
   }
 
   #content .footnotes {
@@ -327,7 +302,7 @@
   }
 
   #content .table-of-contents {
-    @apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 p-4 border dark:border-gray-700 rounded-lg;
+    @apply bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-100 p-4 border dark:border-gray-700 rounded-lg;
   }
 
   #content .table-of-contents #TableOfContents ul {
@@ -339,11 +314,11 @@
   }
 
   #content .table-of-contents #TableOfContents ul li a {
-    @apply font-normal no-underline text-gray-700 dark:text-gray-300 hover:underline hover:text-emerald-600 dark:hover:text-emerald-200;
+    @apply font-normal no-underline text-gray-700 dark:text-gray-100 hover:underline hover:text-emerald-600 dark:hover:text-emerald-200;
   }
 
   #content .pagination-button {
-    @apply no-underline inline-flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-700 text-sm rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100;
+    @apply no-underline inline-flex items-center gap-2 px-3 py-2 border border-gray-100 dark:border-gray-700 text-sm rounded-md text-gray-700 dark:text-gray-100 hover:text-gray-900 dark:hover:text-gray-100;
   }
 
   #content .taxonomy-list {
@@ -363,16 +338,8 @@
   }
 
   /* Misc */
-  #site-title {
-    @apply text-center sm:text-left text-4xl font-extrabold text-gray-800 dark:text-gray-100;
-  }
-
-  .header {
-    @apply flex flex-row items-center justify-between;
-  }
-
-  .header .toggle-theme {
-    @apply w-6 h-6;
+  .site-title {
+    @apply font-extrabold text-gray-800 dark:text-gray-100;
   }
 
   .title-large {
@@ -381,5 +348,9 @@
 
   .title-small {
     @apply text-2xl font-extrabold text-gray-900 dark:text-gray-300;
+  }
+
+  .copyright {
+    @apply font-semibold text-gray-500;
   }
 }

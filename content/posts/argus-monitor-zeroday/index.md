@@ -3,6 +3,8 @@ title: "Discovering a zero-day vulnerability in the Argus Monitor driver"
 draft: false
 date: 2024-10-20T10:13:20.000Z
 description: "Bypassing security mechanisms to exploit an arbitrary physical memory read vulnerability in a temperature monitoring software driver."
+categories:
+  - Vulnerability Research
 ---
 
 ### Introduction
@@ -99,7 +101,7 @@ Immediately noticeable is the XOR operation, which indicates that some XOR encry
 | **Key**              | **b**   | 98    | 01100010               |
 | **Result**           |         | 3     | 00000011               |
 
-The question arises: how do we decrypt it? It's simple—just run it through the key again.
+The question arises: how do we decrypt it? It's simple, just run it through the key again.
 
 | Stage                         | Symbol  | ASCII | Binary Representation  |
 |-------------------------------|---------|-------|------------------------|
@@ -197,7 +199,7 @@ bool xor_buffer(uint8_t* buffer, int size)
 }
 ```
 
-As mentioned earlier, we need to encrypt our input buffer with the key used in the driver, then send a request with the encrypted input so that the driver performs the XOR operation on the input buffer, effectively decrypting it. So what do we need first and foremost? Right—**the key**!
+As mentioned earlier, we need to encrypt our input buffer with the key used in the driver, then send a request with the encrypted input so that the driver performs the XOR operation on the input buffer, effectively decrypting it. So what do we need first and foremost? Right, **the key**!
 
 {{< img src="16.jpg">}}
 

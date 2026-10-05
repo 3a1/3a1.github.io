@@ -1,0 +1,82 @@
+{{ define "main" }}
+<div id="graph" class="w-full h-[70vh] relative overflow-hidden"></div>
+
+<script src="https://unpkg.com/force-graph@1.43.5"></script>
+<script>
+fetch("{{ "graph.json" | relURL }}")
+  .then(r => r.json())
+  .then(data => {
+    const deg = {}; 
+    data.links.forEach(l => {
+      deg[l.source] = (deg[l.source] || 0) + 1;
+      deg[l.target] = (deg[l.target] || 0) + 1;
+    });
+
+    const isDark = () => document.documentElement.classList.contains("dark");
+    const palette = () => isDark()
+    ? { cat: "255,255,255", post: "156,163,175", link: "rgba(156,163,175,0.2)", text: "#ffffff" }
+    : { cat: "50,50,50",    post: "107,114,128", link: "rgba(107,114,128,0.3)", text: "#111827" };
+
+    const el = document.getElementById("graph");
+
+    const Graph = ForceGraph()(el)
+      .graphData(data)
+      .nodeId("id")
+      .nodeLabel(n => n.title)
+      .linkColor(() => "rgba(156,163,175,0.2")
+      .linkWidth(1)
+      .onNodeClick(n => { if (n.url) window.location.href = n.url; })
+      .nodeCanvasObject((node, ctx, scale) => {
+        if (!Number.isFinite(node.x) || !Number.isFinite(node.y)) return;
+
+        // Get colors
+        const c = palette();
+
+        // Is category node?
+        const isCat = node.type === "category";
+
+        // Calculate node size 
+        const r = isCat ? 3 + Math.sqrt(deg[node.id] || 0) * 2.5 : 4;
+
+        // Node color
+        const rgb = isCat ? c.cat : c.post;
+
+        // Create gradient shadow
+        const g = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r * 3);
+
+        // Gradient fade effect
+        g.addColorStop(0, `rgba(${rgb},0.3)`);
+        g.addColorStop(1, `rgba(${rgb},0)`);
+
+        // Draw glow
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(node.x, node.y, r * 3, 0, 2 * Math.PI); ctx.fill();
+
+        // Draw node
+        ctx.fillStyle = `rgb(${rgb})`;
+        ctx.beginPath(); ctx.arc(node.x, node.y, r, 0, 2 * Math.PI); ctx.fill();
+
+        // categories always labeled, posts only when zoomed in
+        if (isCat || scale > 1.6) {
+          const fs = (isCat ? 9 : 6) / scale * 1.6;
+          ctx.font = `${fs}px sans-serif`;
+          ctx.fillStyle = c.text;
+          ctx.textAlign = "center";
+          ctx.fillText(node.title, node.x, node.y + r + fs + 2);
+        }
+      });
+
+    const resize = () => Graph.width(el.clientWidth).height(el.clientHeight);
+    resize();
+    window.addEventListener("resize", resize);
+    new ResizeObserver(resize).observe(el);
+
+    // Add space between nodes inside group
+    Graph.d3Force("link").distance(70);
+    // Add space between node groups
+    Graph.d3Force("charge").strength(-40);
+    // I like it (I'm not)
+    //Graph.d3VelocityDecay(0.9);
+  });
+</script>
+{{ end }}

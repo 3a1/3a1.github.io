@@ -4,20 +4,24 @@
   <header class="flex flex-col gap-2">
     <h2 class="title-large">{{ .Title }}</h2>
 	
-    <div class="meta">
+    <div class="meta flex-col sm:flex-row">
       {{/* Publish date */}}
       <time datetime="{{ .PublishDate }}" title='{{ .PublishDate.Format "Mon, Jan 2, 2006, 3:04 PM MST" }}'>
         {{ .PublishDate.Format "02/01/2006" }} - {{ printf (i18n "estimatedReadingTime") .ReadingTime }}
       </time>
 
-      {{/* Categories */}} 
-      {{ with (.GetTerms "categories") }} — 
-        {{ range . }}
-          <a class="categories" href="{{ .RelPermalink }}" alt="{{ .LinkTitle }}">
-            {{ .LinkTitle }}
-          </a>
-        {{ end }} 
-      {{ end }}
+      <div>
+        {{/* Categories */}} 
+        {{ with (.GetTerms "categories") }} Categories:
+            {{ range . }}
+            <a class="categories" href="{{ .RelPermalink }}" alt="{{ .LinkTitle }}">
+                {{ .LinkTitle }}
+            </a>
+            {{ end }} 
+        {{ end }}
+
+      </div>
+
     </div>
   </header>
 

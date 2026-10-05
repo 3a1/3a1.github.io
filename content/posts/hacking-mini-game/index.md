@@ -3,6 +3,8 @@ title: "Don't trust client-side: How I hacked an mini-game event in PUBG Mobile"
 draft: false
 date: 2026-09-28T10:13:20.000Z
 description: "Exploiting client-side trust to manipulate a PUBG Mobile mini-game event leaderboard."
+categories:
+  - Game Hacking
 ---
 
 My previous post was about creating an iOS cheat using kernel vulnerabilities. If you missed it, go give it a read. No pressure. This writeup is the second part of poking PUBG Mobile with a stick. Less reading, different topic this time, but still interesting. Today I’m gonna to tell you how I hacked an in-game event. Enjoy reading ;)

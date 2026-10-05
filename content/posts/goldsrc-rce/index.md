@@ -3,6 +3,8 @@ title: "Fuzzing GoldSrc: Weaponizing Network Packets for RCE in Counter-Strike 1
 draft: false
 date: 2026-06-11T10:13:20.000Z
 description: "How I used the WTF fuzzing framework to find bugs in the GoldSrc engine and exploit a stack buffer overflow for RCE in Counter-Strike 1.6."
+categories:
+  - Vulnerability Research
 ---
 
 ## Introduction

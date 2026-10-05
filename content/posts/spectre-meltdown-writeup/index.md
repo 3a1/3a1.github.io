@@ -3,6 +3,8 @@ title: "Performance over security: Speculative execution vulnerabilities (Spectr
 draft: false
 date: 2026-05-09T10:13:20.000Z
 description: "A deep dive into Spectre and Meltdown, two hardware-level vulnerabilities that traded security for performance."
+categories:
+  - Vulnerability Research
 ---
 
 **Small note**
